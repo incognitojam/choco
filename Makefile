@@ -12,7 +12,7 @@ HEADERS = tokenizer.h
 
 OBJS = $(SRCS:%.c=$(BUILD_DIR)/%.o)
 
-.PHONY: all clean run snapshot test
+.PHONY: all clean run snapshot test test-all test-ci test-verbose regen
 
 all: $(TARGET)
 
@@ -31,20 +31,30 @@ clean:
 run: $(TARGET)
 	./$(TARGET)
 
-snapshot: $(TARGET)
-	./$(TARGET) > snapshot.txt
-
+# Test all fixtures using the Python test script
 test: $(TARGET)
-	./$(TARGET) > output.txt
-	@if diff -q snapshot.txt output.txt > /dev/null; then \
-		echo "Test passed: output matches expected"; \
-		rm output.txt; \
-	else \
-		echo "Test failed: output differs from expected"; \
-		echo "Expected:"; \
-		cat snapshot.txt; \
-		echo "Actual:"; \
-		cat output.txt; \
-		rm output.txt; \
-		exit 1; \
-	fi
+	./test.py test
+
+# Test all fixtures (alias for test)
+test-all: $(TARGET)
+	./test.py test
+
+# Test in CI mode (only fail on new failures)
+test-ci: $(TARGET)
+	./test.py test --ci
+
+# Test with verbose output
+test-verbose: $(TARGET)
+	./test.py test --verbose
+
+# Test in CI mode with verbose output
+test-ci-verbose: $(TARGET)
+	./test.py test --ci --verbose
+
+# Regenerate all snapshots
+regen: $(TARGET)
+	./test.py regenerate
+
+# Test specific fixture (e.g., make test-vars)
+test-%: $(TARGET)
+	./test.py test-$*
