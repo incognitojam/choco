@@ -71,7 +71,7 @@ Token *createToken(TokenType type) {
 }
 
 TokenType findSingleCharToken(char c) {
-  for (int i = 0; SINGLE_CHAR_TOKENS[i].name != NULL; i++) {
+  for (int i = 0; SINGLE_CHAR_TOKENS[i].character != 0; i++) {
     if (SINGLE_CHAR_TOKENS[i].character == c) {
       return SINGLE_CHAR_TOKENS[i].type;
     }
@@ -79,8 +79,8 @@ TokenType findSingleCharToken(char c) {
   return TOKEN_UNKNOWN;
 }
 
-const char *getTokenName(TokenType type) {
-  for (int i = 0; SINGLE_CHAR_TOKENS[i].name != NULL; i++) {
+const char *getSingleCharTokenName(TokenType type) {
+  for (int i = 0; SINGLE_CHAR_TOKENS[i].character != 0; i++) {
     if (SINGLE_CHAR_TOKENS[i].type == type) {
       return SINGLE_CHAR_TOKENS[i].name;
     }
@@ -134,10 +134,9 @@ void dumpTokenList(TokenList *list) {
       printf("STRING %s ", token->string.value);
       break;
     default: {
-      // Single-character tokens
-      const char *tokenName = getTokenName(token->type);
-      if (tokenName != NULL) {
-        printf("%s ", tokenName);
+      const char *name = getSingleCharTokenName(token->type);
+      if (name != NULL) {
+        printf("%s ", name);
       } else {
         printf("UNKNOWN ");
       }
