@@ -3,25 +3,27 @@
 #include "tokenizer.h"
 
 int main() {
-  TokenList *list = createTokenList();
+  TokenList *toks = createTokenList();
 
+  /*
   Token *var = createToken(TOKEN_VAR);
-  addToken(list, var);
+  addToken(toks, var);
 
   Token *ident = createToken(TOKEN_IDENTIFIER);
   ident->identifier.name = strdup("x");
-  addToken(list, ident);
+  addToken(toks, ident);
 
   Token *eq = createToken(TOKEN_EQUALS);
-  addToken(list, eq);
+  addToken(toks, eq);
 
   Token *value = createToken(TOKEN_NUMBER);
   value->number.value = 0;
-  addToken(list, value);
+  addToken(toks, value);
 
   Token *semicolon = createToken(TOKEN_SEMICOLON);
-  addToken(list, semicolon);
+  addToken(toks, semicolon);
+  */
 
-  dumpTokenList(list);
-  freeTokenList(list);
+  dumpTokenList(toks);
+  freeTokenList(toks);
 }
