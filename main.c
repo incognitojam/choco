@@ -24,6 +24,14 @@ int main() {
   addToken(toks, semicolon);
   */
 
+  FILE *file = fopen("./examples/vars.js", "r");
+  if (file == NULL) {
+    perror("Error opening file");
+    return 1;
+  }
+  tokenizeFile(file, toks);
+  fclose(file);
+
   dumpTokenList(toks);
   freeTokenList(toks);
 }
