@@ -226,7 +226,7 @@ void tokenizeFile(FILE *input, TokenList *list) {
       continue;
     }
 
-    printf("Unexpected character: %c\n", c);
-    assert(false);
+    fprintf(stderr, "Unexpected character: %c\n", c);
+    abort();
   }
 }
