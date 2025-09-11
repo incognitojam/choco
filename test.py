@@ -17,6 +17,7 @@ RED = '\033[0;31m'
 YELLOW = '\033[1;33m'
 BLUE = '\033[0;34m'
 CYAN = '\033[0;36m'
+GRAY = '\033[0;90m'
 NC = '\033[0m'
 
 def run_program(fixture_path):
@@ -110,35 +111,39 @@ def run_test(fixture_path, verbose=False):
   status_changed = expected['status'] != actual['status']
 
   # Print result
-  if snapshot_matches:
-    print(f"{GREEN}✓ Test passed: {basename}.js{NC}")
+  status_icon = "✓" if actual['status'] == 'pass' else "✗"
+  color = GREEN if actual['status'] == 'pass' else RED
+
+  change_indicator = ""
+  if status_changed:
+    if actual['status'] == 'pass':
+      change_indicator = f"{CYAN}(now passing!)"
+    else:
+      change_indicator = f"{YELLOW}(now failing!)"
+  elif not snapshot_matches:
+    change_indicator = f"{YELLOW}(snapshot differs)"
   else:
-    change_indicator = ""
-    if status_changed:
-      if actual['status'] == 'pass':
-        change_indicator = f" {CYAN}(now passing!){NC}"
-      else:
-        change_indicator = f" {YELLOW}(now failing!){NC}"
+    change_indicator = f"{GRAY}(no change)"
 
-    print(f"{RED}✗ Snapshot differs: {basename}.js{change_indicator}{NC}")
+  print(f"{color}{status_icon} {basename}.js {change_indicator}{NC}")
 
-    if verbose:
-      for diff in diffs:
-        print(f"  {diff}")
+  if verbose and not snapshot_matches:
+    for diff in diffs:
+      print(f"  {diff}")
 
-      if 'Stdout differs' in diffs:
-        print("Expected stdout:")
-        print(expected['stdout'])
-        print("Actual stdout:")
-        print(actual['stdout'])
+    if 'Stdout differs' in diffs:
+      print("Expected stdout:")
+      print(expected['stdout'])
+      print("Actual stdout:")
+      print(actual['stdout'])
 
-      if 'Stderr differs' in diffs:
-        print("Expected stderr:")
-        print(expected['stderr'])
-        print("Actual stderr:")
-        print(actual['stderr'])
+    if 'Stderr differs' in diffs:
+      print("Expected stderr:")
+      print(expected['stderr'])
+      print("Actual stderr:")
+      print(actual['stderr'])
 
-      print("---")
+    print("---")
 
   return snapshot_matches, status_changed, actual
 
@@ -151,12 +156,19 @@ def test_all(ci_mode=False, verbose=False):
     'total': len(fixtures),
     'matching_snapshots': 0,
     'differing_snapshots': 0,
+    'passes': 0,
+    'failures': 0,
     'new_passes': 0,
     'new_failures': 0,
   }
 
   for fixture in fixtures:
     snapshot_matches, status_changed, result = run_test(fixture, verbose)
+
+    if result['status'] == 'pass':
+      results['passes'] += 1
+    else:
+      results['failures'] += 1
 
     if snapshot_matches:
       results['matching_snapshots'] += 1
@@ -171,7 +183,9 @@ def test_all(ci_mode=False, verbose=False):
 
   # Print summary
   print("---")
-  print(f"Results: {results['matching_snapshots']} snapshots match, {results['differing_snapshots']} differ")
+  success = results['differing_snapshots'] == 0
+  print(f"Tests: {GREEN}{results['passes']} pass{NC}, {RED}{results['failures']} fail{NC}")
+  print(f"Snapshots: {GREEN}{results['matching_snapshots']} match{NC}, {'' if success else RED}{results['differing_snapshots']} differ{NC}")
 
   if results['new_passes'] > 0:
     print(f"{GREEN}🎉 {results['new_passes']} test(s) now passing!{NC}")
@@ -180,17 +194,12 @@ def test_all(ci_mode=False, verbose=False):
     print(f"{RED}💥 {results['new_failures']} test(s) now failing!{NC}")
 
   if ci_mode:
-    # In CI mode, fail if any snapshot differs
-    success = results['differing_snapshots'] == 0
     if not success:
       print(f"{RED}CI: Failing (snapshots differ from expected){NC}")
     else:
       print(f"{CYAN}CI: Passing (all snapshots match){NC}")
-  else:
-    # In normal mode, we're more permissive - just report differences
-    success = results['differing_snapshots'] == 0
-    if not success:
-      print(f"{YELLOW}Note: Run 'make regen' to update snapshots if changes are intentional{NC}")
+  elif not success:
+    print(f"{YELLOW}Note: Run 'make regen' to update snapshots if changes are intentional{NC}")
 
   return success
 
