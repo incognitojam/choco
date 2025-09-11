@@ -7,6 +7,7 @@ typedef enum TokenType {
   TOKEN_IDENTIFIER,
   TOKEN_EQUALS,
   TOKEN_NUMBER,
+  TOKEN_STRING,
   TOKEN_SEMICOLON,
 } TokenType;
 
@@ -19,6 +20,9 @@ typedef struct Token {
     struct {
       double value;
     } number;
+    struct {
+      char *value;
+    } string;
   };
 } Token;
 
@@ -72,6 +76,9 @@ void dumpTokenList(TokenList *list) {
       break;
     case TOKEN_NUMBER:
       printf("NUMBER %f ", token->number.value);
+      break;
+    case TOKEN_STRING:
+      printf("STRING %s ", token->string.value);
       break;
     case TOKEN_SEMICOLON:
       printf("SEMICOLON ");
