@@ -2,7 +2,7 @@
 
 #include "tokenizer.h"
 
-int main() {
+int main(int argc, char *argv[]) {
   TokenList *toks = createTokenList();
 
   /*
@@ -24,9 +24,15 @@ int main() {
   addToken(toks, semicolon);
   */
 
-  FILE *file = fopen("./examples/vars.js", "r");
+  const char *filename = "examples/vars.js"; // default
+  if (argc > 1) {
+    filename = argv[1];
+  }
+
+  FILE *file = fopen(filename, "r");
   if (file == NULL) {
-    perror("Error opening file");
+    fprintf(stderr, "Error opening file '%s': ", filename);
+    perror("");
     return 1;
   }
   tokenizeFile(file, toks);
