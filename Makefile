@@ -1,4 +1,4 @@
-C = gcc
+CC = gcc
 
 CFLAGS = -Wall -g
 
@@ -8,23 +8,25 @@ TARGET = $(BUILD_DIR)/main
 
 SRCS = main.c
 
-OBJS = $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
+HEADERS = tokenizer.h
+
+OBJS = $(SRCS:%.c=$(BUILD_DIR)/%.o)
 
 .PHONY: all clean run
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS) | $(BUILD_DIR)
-	$(C) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^
 
-$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
-	$(C) $(CFLAGS) -c $< -o $@
+$(BUILD_DIR)/%.o: %.c $(HEADERS) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-run: $(TARGET)
-	$(TARGET)
-
 clean:
 	rm -rf $(BUILD_DIR)
+
+run: $(TARGET)
+	./$(TARGET)
