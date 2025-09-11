@@ -112,7 +112,11 @@ void freeTokenList(TokenList *list) {
   TokenNode *node = list->head;
   while (node != NULL) {
     TokenNode *next = node->next;
-    free(node->token->identifier.name);
+    if (node->token->type == TOKEN_IDENTIFIER) {
+      free(node->token->identifier.name);
+    } else if (node->token->type == TOKEN_STRING) {
+      free(node->token->string.value);
+    }
     free(node->token);
     free(node);
     node = next;
