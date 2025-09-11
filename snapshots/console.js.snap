@@ -1,6 +1,6 @@
 {
-  "exit_code": -6,
-  "stdout": "",
-  "stderr": "Unexpected character: .\n",
-  "status": "fail"
+  "exit_code": 0,
+  "stdout": "IDENTIFIER console PERIOD IDENTIFIER log LEFT PARENS STRING Hello, world! RIGHT PARENS SEMICOLON \n",
+  "stderr": "",
+  "status": "pass"
 }
