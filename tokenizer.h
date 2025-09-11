@@ -25,6 +25,29 @@ typedef enum TokenType {
   TOKEN_SEMICOLON,
 } TokenType;
 
+typedef struct SingleCharToken {
+  char character;
+  TokenType type;
+  const char *name;
+} SingleCharToken;
+
+static const SingleCharToken SINGLE_CHAR_TOKENS[] = {
+    {';', TOKEN_SEMICOLON, "SEMICOLON"},
+    {'=', TOKEN_EQUALS, "EQUALS"},
+    {'+', TOKEN_PLUS, "PLUS"},
+    {'-', TOKEN_MINUS, "MINUS"},
+    {'*', TOKEN_MULTIPLY, "MULTIPLY"},
+    {'/', TOKEN_DIVIDE, "DIVIDE"},
+    {'.', TOKEN_PERIOD, "PERIOD"},
+    {'(', TOKEN_LEFT_PARENS, "LEFT PARENS"},
+    {')', TOKEN_RIGHT_PARENS, "RIGHT PARENS"},
+    {'[', TOKEN_OPENING_BRACKET, "OPENING BRACKET"},
+    {']', TOKEN_CLOSING_BRACKET, "CLOSING BRACKET"},
+    {'{', TOKEN_OPENING_BRACE, "OPENING BRACE"},
+    {'}', TOKEN_CLOSING_BRACE, "CLOSING BRACE"},
+    {0, 0, NULL} // Sentinel value
+};
+
 typedef struct Token {
   TokenType type;
   union {
@@ -44,6 +67,24 @@ Token *createToken(TokenType type) {
   Token *token = (Token *)malloc(sizeof(Token));
   token->type = type;
   return token;
+}
+
+TokenType findSingleCharToken(char c) {
+  for (int i = 0; SINGLE_CHAR_TOKENS[i].name != NULL; i++) {
+    if (SINGLE_CHAR_TOKENS[i].character == c) {
+      return SINGLE_CHAR_TOKENS[i].type;
+    }
+  }
+  return 0;
+}
+
+const char *getTokenName(TokenType type) {
+  for (int i = 0; SINGLE_CHAR_TOKENS[i].name != NULL; i++) {
+    if (SINGLE_CHAR_TOKENS[i].type == type) {
+      return SINGLE_CHAR_TOKENS[i].name;
+    }
+  }
+  return NULL;
 }
 
 typedef struct TokenNode {
@@ -85,51 +126,22 @@ void dumpTokenList(TokenList *list) {
     case TOKEN_IDENTIFIER:
       printf("IDENTIFIER %s ", token->identifier.name);
       break;
-    case TOKEN_EQUALS:
-      printf("EQUALS ");
-      break;
-    case TOKEN_PLUS:
-      printf("PLUS ");
-      break;
-    case TOKEN_MINUS:
-      printf("MINUS ");
-      break;
-    case TOKEN_MULTIPLY:
-      printf("MULTIPLY ");
-      break;
-    case TOKEN_DIVIDE:
-      printf("DIVIDE ");
-      break;
-    case TOKEN_PERIOD:
-      printf("PERIOD ");
-      break;
-    case TOKEN_LEFT_PARENS:
-      printf("LEFT PARENS ");
-      break;
-    case TOKEN_RIGHT_PARENS:
-      printf("RIGHT PARENS ");
-      break;
-    case TOKEN_OPENING_BRACKET:
-      printf("OPENING BRACKET ");
-      break;
-    case TOKEN_CLOSING_BRACKET:
-      printf("CLOSING BRACKET ");
-      break;
-    case TOKEN_OPENING_BRACE:
-      printf("OPENING BRACE ");
-      break;
-    case TOKEN_CLOSING_BRACE:
-      printf("CLOSING BRACE");
-      break;
     case TOKEN_NUMBER:
       printf("NUMBER %f ", token->number.value);
       break;
     case TOKEN_STRING:
       printf("STRING %s ", token->string.value);
       break;
-    case TOKEN_SEMICOLON:
-      printf("SEMICOLON ");
+    default: {
+      // Single-character tokens
+      const char *tokenName = getTokenName(token->type);
+      if (tokenName != NULL) {
+        printf("%s ", tokenName);
+      } else {
+        printf("UNKNOWN ");
+      }
       break;
+    }
     }
     node = node->next;
   }
@@ -160,56 +172,9 @@ void tokenizeFile(FILE *input, TokenList *list) {
       continue;
     }
 
-    if (c == ';') {
-      addToken(list, createToken(TOKEN_SEMICOLON));
-      continue;
-    }
-    if (c == '=') {
-      addToken(list, createToken(TOKEN_EQUALS));
-      continue;
-    }
-    if (c == '+') {
-      addToken(list, createToken(TOKEN_PLUS));
-      continue;
-    }
-    if (c == '-') {
-      addToken(list, createToken(TOKEN_MINUS));
-      continue;
-    }
-    if (c == '*') {
-      addToken(list, createToken(TOKEN_MULTIPLY));
-      continue;
-    }
-    if (c == '/') {
-      addToken(list, createToken(TOKEN_DIVIDE));
-      continue;
-    }
-    if (c == '.') {
-      addToken(list, createToken(TOKEN_PERIOD));
-      continue;
-    }
-    if (c == '(') {
-      addToken(list, createToken(TOKEN_LEFT_PARENS));
-      continue;
-    }
-    if (c == ')') {
-      addToken(list, createToken(TOKEN_RIGHT_PARENS));
-      continue;
-    }
-    if (c == '[') {
-      addToken(list, createToken(TOKEN_OPENING_BRACKET));
-      continue;
-    }
-    if (c == ']') {
-      addToken(list, createToken(TOKEN_CLOSING_BRACKET));
-      continue;
-    }
-    if (c == '{') {
-      addToken(list, createToken(TOKEN_OPENING_BRACE));
-      continue;
-    }
-    if (c == '}') {
-      addToken(list, createToken(TOKEN_CLOSING_BRACE));
+    TokenType singleCharType = findSingleCharToken(c);
+    if (singleCharType != 0) {
+      addToken(list, createToken(singleCharType));
       continue;
     }
 
