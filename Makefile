@@ -12,7 +12,7 @@ HEADERS = tokenizer.h
 
 OBJS = $(SRCS:%.c=$(BUILD_DIR)/%.o)
 
-.PHONY: all clean run
+.PHONY: all clean run snapshot test
 
 all: $(TARGET)
 
@@ -30,3 +30,21 @@ clean:
 
 run: $(TARGET)
 	./$(TARGET)
+
+snapshot: $(TARGET)
+	./$(TARGET) > snapshot.txt
+
+test: $(TARGET)
+	./$(TARGET) > output.txt
+	@if diff -q snapshot.txt output.txt > /dev/null; then \
+		echo "Test passed: output matches expected"; \
+		rm output.txt; \
+	else \
+		echo "Test failed: output differs from expected"; \
+		echo "Expected:"; \
+		cat snapshot.txt; \
+		echo "Actual:"; \
+		cat output.txt; \
+		rm output.txt; \
+		exit 1; \
+	fi
