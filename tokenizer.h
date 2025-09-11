@@ -13,6 +13,13 @@ typedef enum TokenType {
   TOKEN_MINUS,
   TOKEN_MULTIPLY,
   TOKEN_DIVIDE,
+  TOKEN_PERIOD,
+  TOKEN_LEFT_PARENS,
+  TOKEN_RIGHT_PARENS,
+  TOKEN_OPENING_BRACKET,
+  TOKEN_CLOSING_BRACKET,
+  TOKEN_OPENING_BRACE,
+  TOKEN_CLOSING_BRACE,
   TOKEN_NUMBER,
   TOKEN_STRING,
   TOKEN_SEMICOLON,
@@ -93,6 +100,27 @@ void dumpTokenList(TokenList *list) {
     case TOKEN_DIVIDE:
       printf("DIVIDE ");
       break;
+    case TOKEN_PERIOD:
+      printf("PERIOD ");
+      break;
+    case TOKEN_LEFT_PARENS:
+      printf("LEFT PARENS ");
+      break;
+    case TOKEN_RIGHT_PARENS:
+      printf("RIGHT PARENS ");
+      break;
+    case TOKEN_OPENING_BRACKET:
+      printf("OPENING BRACKET ");
+      break;
+    case TOKEN_CLOSING_BRACKET:
+      printf("CLOSING BRACKET ");
+      break;
+    case TOKEN_OPENING_BRACE:
+      printf("OPENING BRACE ");
+      break;
+    case TOKEN_CLOSING_BRACE:
+      printf("CLOSING BRACE");
+      break;
     case TOKEN_NUMBER:
       printf("NUMBER %f ", token->number.value);
       break;
@@ -154,6 +182,34 @@ void tokenizeFile(FILE *input, TokenList *list) {
     }
     if (c == '/') {
       addToken(list, createToken(TOKEN_DIVIDE));
+      continue;
+    }
+    if (c == '.') {
+      addToken(list, createToken(TOKEN_PERIOD));
+      continue;
+    }
+    if (c == '(') {
+      addToken(list, createToken(TOKEN_LEFT_PARENS));
+      continue;
+    }
+    if (c == ')') {
+      addToken(list, createToken(TOKEN_RIGHT_PARENS));
+      continue;
+    }
+    if (c == '[') {
+      addToken(list, createToken(TOKEN_OPENING_BRACKET));
+      continue;
+    }
+    if (c == ']') {
+      addToken(list, createToken(TOKEN_CLOSING_BRACKET));
+      continue;
+    }
+    if (c == '{') {
+      addToken(list, createToken(TOKEN_OPENING_BRACE));
+      continue;
+    }
+    if (c == '}') {
+      addToken(list, createToken(TOKEN_CLOSING_BRACE));
       continue;
     }
 
