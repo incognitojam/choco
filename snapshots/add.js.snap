@@ -1,6 +1,6 @@
 {
   "exit_code": -6,
   "stdout": "Unexpected character: (\n",
-  "stderr": "Assertion failed: (false), function tokenizeFile, file tokenizer.h, line 225.\n",
+  "stderr": "Assertion failed: (false), function tokenizeFile, file tokenizer.h, line 230.\n",
   "status": "fail"
 }
