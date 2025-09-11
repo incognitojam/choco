@@ -162,7 +162,7 @@ void tokenizeFile(FILE *input, TokenList *list) {
       char buffer[256];
       int i = 0;
       bool hasDecimal = false;
-      while ((c = fgetc(input)) != EOF && i < 255 &&
+      while ((c = fgetc(input)) != EOF && i < (sizeof(buffer) - 1) &&
              (isdigit(c) || (!hasDecimal && c == '.'))) {
         if (c == '.') {
           hasDecimal = true;
@@ -184,7 +184,7 @@ void tokenizeFile(FILE *input, TokenList *list) {
       ungetc(c, input);
       char buffer[256];
       int i = 0;
-      while ((c = fgetc(input)) != EOF && i < 255 &&
+      while ((c = fgetc(input)) != EOF && i < (sizeof(buffer) - 1) &&
              (isalpha(c) || isdigit(c) || c == '_')) {
         buffer[i++] = c;
       }
@@ -211,7 +211,8 @@ void tokenizeFile(FILE *input, TokenList *list) {
     if (c == '"') {
       char buffer[1024];
       int i = 0;
-      while ((c = fgetc(input)) != EOF && c != '"' && i < 1023) {
+      while ((c = fgetc(input)) != EOF && i < (sizeof(buffer) - 1) &&
+             c != '"') {
         buffer[i++] = c;
       }
       buffer[i] = '\0';
