@@ -9,6 +9,10 @@ typedef enum TokenType {
   TOKEN_VAR,
   TOKEN_IDENTIFIER,
   TOKEN_EQUALS,
+  TOKEN_PLUS,
+  TOKEN_MINUS,
+  TOKEN_MULTIPLY,
+  TOKEN_DIVIDE,
   TOKEN_NUMBER,
   TOKEN_STRING,
   TOKEN_SEMICOLON,
@@ -77,6 +81,18 @@ void dumpTokenList(TokenList *list) {
     case TOKEN_EQUALS:
       printf("EQUALS ");
       break;
+    case TOKEN_PLUS:
+      printf("PLUS ");
+      break;
+    case TOKEN_MINUS:
+      printf("MINUS ");
+      break;
+    case TOKEN_MULTIPLY:
+      printf("MULTIPLY ");
+      break;
+    case TOKEN_DIVIDE:
+      printf("DIVIDE ");
+      break;
     case TOKEN_NUMBER:
       printf("NUMBER %f ", token->number.value);
       break;
@@ -116,9 +132,24 @@ void tokenizeFile(FILE *input, TokenList *list) {
       addToken(list, createToken(TOKEN_SEMICOLON));
       continue;
     }
-
     if (c == '=') {
       addToken(list, createToken(TOKEN_EQUALS));
+      continue;
+    }
+    if (c == '+') {
+      addToken(list, createToken(TOKEN_PLUS));
+      continue;
+    }
+    if (c == '-') {
+      addToken(list, createToken(TOKEN_MINUS));
+      continue;
+    }
+    if (c == '*') {
+      addToken(list, createToken(TOKEN_MULTIPLY));
+      continue;
+    }
+    if (c == '/') {
+      addToken(list, createToken(TOKEN_DIVIDE));
       continue;
     }
 
