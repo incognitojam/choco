@@ -104,33 +104,6 @@ void freeTokenList(TokenList *list) {
   free(list);
 }
 
-char *extract_while(char **current_ptr, int (*condition)(int)) {
-  char *start = *current_ptr;
-  char *end = start;
-  while (*end && condition(*end)) {
-    end++;
-  }
-
-  int length = end - start;
-  if (length == 0) {
-    return NULL;
-  }
-
-  char *result = (char *)malloc(length + 1);
-  if (!result) {
-    return NULL;
-  }
-  memcpy(result, start, length);
-  result[length] = '\0';
-
-  *current_ptr = end;
-  return result;
-}
-
-int is_identifier_char(int c) { return isalpha(c) || isdigit(c) || c == '_'; }
-
-int is_digit_char(int c) { return isdigit(c); }
-
 void tokenizeFile(FILE *input, TokenList *list) {
   int c;
   while ((c = fgetc(input)) != EOF) {
