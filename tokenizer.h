@@ -6,6 +6,7 @@
 #include <string.h>
 
 typedef enum TokenType {
+  TOKEN_UNKNOWN,
   TOKEN_VAR,
   TOKEN_IDENTIFIER,
   TOKEN_EQUALS,
@@ -45,7 +46,7 @@ static const SingleCharToken SINGLE_CHAR_TOKENS[] = {
     {']', TOKEN_CLOSING_BRACKET, "CLOSING BRACKET"},
     {'{', TOKEN_OPENING_BRACE, "OPENING BRACE"},
     {'}', TOKEN_CLOSING_BRACE, "CLOSING BRACE"},
-    {0, 0, NULL} // Sentinel value
+    {0, TOKEN_UNKNOWN, NULL} // Sentinel value
 };
 
 typedef struct Token {
@@ -75,7 +76,7 @@ TokenType findSingleCharToken(char c) {
       return SINGLE_CHAR_TOKENS[i].type;
     }
   }
-  return 0;
+  return TOKEN_UNKNOWN;
 }
 
 const char *getTokenName(TokenType type) {
@@ -173,7 +174,7 @@ void tokenizeFile(FILE *input, TokenList *list) {
     }
 
     TokenType singleCharType = findSingleCharToken(c);
-    if (singleCharType != 0) {
+    if (singleCharType != TOKEN_UNKNOWN) {
       addToken(list, createToken(singleCharType));
       continue;
     }
