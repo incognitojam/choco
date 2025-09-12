@@ -1,25 +1,19 @@
 CC = gcc
-
 CFLAGS = -Wall -g
 
 BUILD_DIR = build
-
 TARGET = $(BUILD_DIR)/main
 
-SRCS = main.c
-
-HEADERS = tokenizer.h
-
-OBJS = $(SRCS:%.c=$(BUILD_DIR)/%.o)
-
-.PHONY: all clean run snapshot test test-all test-ci test-verbose regen
+SRCS := main.c
+OBJS := $(patsubst %.c,build/%.o,$(SRCS))
+DEPS := $(OBJS:.o=.d)
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS) | $(BUILD_DIR)
+$(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-$(BUILD_DIR)/%.o: %.c $(HEADERS) | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR):
@@ -58,3 +52,7 @@ regen: $(TARGET)
 # Test specific fixture (e.g., make test-vars)
 test-%: $(TARGET)
 	./test.py test-$*
+
+.PHONY: all clean run snapshot test test-all test-ci test-verbose regen
+
+-include $(DEPS)
