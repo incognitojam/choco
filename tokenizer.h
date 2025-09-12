@@ -1,3 +1,6 @@
+#ifndef TOKENIZER_H
+#define TOKENIZER_H
+
 #include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -251,3 +254,5 @@ void tokenizeFile(FILE *input, TokenList *list) {
     abort();
   }
 }
+
+#endif // TOKENIZER_H
