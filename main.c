@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "tokenizer.h"
+#include "parser.h"
 
 int main(int argc, char *argv[]) {
   TokenList *toks = createTokenList();
@@ -38,6 +38,16 @@ int main(int argc, char *argv[]) {
   tokenizeFile(file, toks);
   fclose(file);
 
+  printf("=== TOKENS ===\n");
   dumpTokenList(toks);
+
+  printf("\n=== AST ===\n");
+  ASTNode *ast = parseTokens(toks);
+  if (ast != NULL) {
+    dumpAST(ast, 0);
+  } else {
+    printf("Failed to parse\n");
+  }
+
   freeTokenList(toks);
 }

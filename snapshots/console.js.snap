@@ -1,6 +1,6 @@
 {
   "exit_code": 0,
-  "stdout": "IDENTIFIER console PERIOD IDENTIFIER log LEFT PARENS STRING Hello, world! RIGHT PARENS SEMICOLON \n",
-  "stderr": "",
+  "stdout": "=== TOKENS ===\nIDENTIFIER console PERIOD IDENTIFIER log LEFT PARENS STRING Hello, world! RIGHT PARENS SEMICOLON \n\n=== AST ===\nPROGRAM\n  IDENTIFIER: console\n",
+  "stderr": "Expected token type 17\n",
   "status": "pass"
 }
