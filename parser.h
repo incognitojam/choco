@@ -11,6 +11,27 @@ typedef enum ASTNodeType {
   AST_NUMBER,
 } ASTNodeType;
 
+typedef enum BinaryExpressionOperator {
+  OP_PLUS,
+  OP_MINUS,
+  OP_MULTIPLY,
+  OP_DIVIDE,
+  OP_UNKNOWN,
+} BinaryExpressionOperator;
+
+const char *getOperatorName(BinaryExpressionOperator op) {
+  static const char *names[] = {
+      "PLUS",
+      "MINUS",
+      "MULTIPLY",
+      "DIVIDE",
+  };
+  if (op >= 0 && op < OP_UNKNOWN) {
+    return names[op];
+  }
+  return "UNKNOWN";
+}
+
 typedef struct ASTNode {
   ASTNodeType type;
   union {
@@ -23,7 +44,7 @@ typedef struct ASTNode {
       struct ASTNode *value;
     } variable_declaration;
     struct {
-      char *op;
+      BinaryExpressionOperator op;
       struct ASTNode *left;
       struct ASTNode *right;
     } binary_expression;
@@ -168,22 +189,21 @@ ASTNode *parseBinaryExpression(Parser *parser, ASTNode *left, int minPrec) {
     node->binary_expression.left = left;
     node->binary_expression.right = right;
 
-    // Convert token type to operator string
     switch (op->type) {
     case TOKEN_PLUS:
-      node->binary_expression.op = strdup("+");
+      node->binary_expression.op = OP_PLUS;
       break;
     case TOKEN_MINUS:
-      node->binary_expression.op = strdup("-");
+      node->binary_expression.op = OP_MINUS;
       break;
     case TOKEN_MULTIPLY:
-      node->binary_expression.op = strdup("*");
+      node->binary_expression.op = OP_MULTIPLY;
       break;
     case TOKEN_DIVIDE:
-      node->binary_expression.op = strdup("/");
+      node->binary_expression.op = OP_DIVIDE;
       break;
     default:
-      node->binary_expression.op = strdup("?");
+      node->binary_expression.op = OP_UNKNOWN;
       break;
     }
 
@@ -255,7 +275,7 @@ void dumpAST(ASTNode *node, int indent) {
     dumpAST(node->variable_declaration.value, indent + 1);
     break;
   case AST_BINARY_EXPRESSION:
-    printf("BINARY_OP: %s\n", node->binary_expression.op);
+    printf("BINARY_OP: %s\n", getOperatorName(node->binary_expression.op));
     dumpAST(node->binary_expression.left, indent + 1);
     dumpAST(node->binary_expression.right, indent + 1);
     break;
